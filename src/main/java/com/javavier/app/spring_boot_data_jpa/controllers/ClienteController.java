@@ -1,0 +1,85 @@
+package com.javavier.app.spring_boot_data_jpa.controllers;
+
+import com.javavier.app.spring_boot_data_jpa.models.entity.Cliente;
+import com.javavier.app.spring_boot_data_jpa.models.service.IClienteService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Map;
+
+@Controller
+@SessionAttributes("cliente")
+public class ClienteController {
+
+    @Autowired
+    private IClienteService clienteService;
+
+    @GetMapping(value = "/ver/{id}")
+    public String ver(@PathVariable(value="id") Long id, Map<String, Object> model, RedirectAttributes flash){
+        Cliente cliente = clienteService.findOne(id);
+        if (cliente == null){
+            flash.addFlashAttribute("error", "El cliente no existe en la base de datos");
+            return "redirect:/listar";
+        }
+        model.put("cliente", cliente);
+        model.put("titulo", "Detalle del cliente: " + cliente.getNombre());
+        return "ver";
+    }
+
+    @RequestMapping(value = "/listar", method = RequestMethod.GET)
+    public String listar(Model model){
+        model.addAttribute("titulo", "Listado de  Clientes");
+        model.addAttribute("clientes", clienteService.findAll());
+        return "listar";
+    }
+
+    @RequestMapping(value = "/form")
+    public String crear(Map<String, Object> model){
+        Cliente cliente = new Cliente();
+        model.put("cliente", cliente);
+        model.put("titulo", "Formulario de Cliente");
+        return "form";
+    }
+
+    @RequestMapping(value = "/form/{id}")
+    public String editar(@PathVariable(value = "id") Long id, Map<String, Object> model){
+        Cliente cliente = null;
+        if (id > 0){
+            cliente = clienteService.findOne(id);
+        } else {
+            return "redirect:/listar";
+        }
+        model.put("cliente", cliente);
+        model.put("titulo", "Editar Cliente");
+        return "form";
+    }
+
+    @RequestMapping(value = "/form", method = RequestMethod.POST)
+    public String guardar(@Valid Cliente cliente, BindingResult result, Model model, SessionStatus status){
+
+        if (result.hasErrors()){
+            model.addAttribute("titulo", "Formulario de Cliente");
+            return "form";
+        }
+        //System.out.println("Paso 002: " + cliente.getNombre() + cliente.getApellido() + cliente.getEmail());
+        clienteService.save(cliente);
+        status.setComplete();
+        return "redirect:/listar";
+    }
+
+    @RequestMapping(value = "/eliminar/{id}")
+    public String eliminar(@PathVariable(value = "id") Long id){
+        if (id > 0){
+            clienteService.delete(id);
+        }
+        return "redirect:/listar";
+    }
+
+
+}
