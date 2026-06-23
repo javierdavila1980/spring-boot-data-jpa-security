@@ -32,7 +32,7 @@ public class ClienteController {
         return "ver";
     }
 
-    @RequestMapping(value = "/listar", method = RequestMethod.GET)
+    @RequestMapping(value = {"/listar", "/"}, method = RequestMethod.GET)
     public String listar(Model model){
         model.addAttribute("titulo", "Listado de  Clientes");
         model.addAttribute("clientes", clienteService.findAll());
