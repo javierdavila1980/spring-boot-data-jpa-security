@@ -1,9 +1,11 @@
 package com.javavier.app.spring_boot_data_jpa;
 
 import com.javavier.app.spring_boot_data_jpa.auth.handler.LoginSuccesHandler;
+import com.javavier.app.spring_boot_data_jpa.models.service.JpaUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,11 +23,27 @@ public class SpringSecurityConfig {
     @Autowired
     private LoginSuccesHandler successHandler;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JpaUserDetailService userDetailService;
+
+
+
     @Bean
     public static BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+
+    @Autowired
+    public void userDetailsService(AuthenticationManagerBuilder build) throws Exception {
+        build.userDetailsService(userDetailService)
+                .passwordEncoder(passwordEncoder);
+    }
+
+    /* *
     @Bean
     public UserDetailsService userDetailsService()throws Exception{
 
@@ -42,7 +60,10 @@ public class SpringSecurityConfig {
                 .build());
 
         return manager;
+
     }
+    * */
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

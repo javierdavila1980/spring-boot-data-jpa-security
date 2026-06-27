@@ -18,3 +18,11 @@ INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(1, 1, 6);
 INSERT INTO facturas (descripcion, observacion, cliente_id, create_at) VALUES('Factura de ejemplo 02', 'Obs.', 1, NOW());
 INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(1, 2, 5);
 INSERT INTO facturas_items (cantidad, factura_id, producto_id) VALUES(1, 2, 6);
+
+/* Creamos usuarios de ejemplo  */
+INSERT INTO users (username, password, enabled) VALUES ('javier', '$2a$10$MqB1of76StNbG08wgHRYPOAoM.pkZEKft0QMEdRoKlu6C3xL8maSi', 1);
+INSERT INTO users (username, password, enabled) VALUES ('admin', '$2a$10$RetJOlmDUuOhJjSBKdThhu/2pqPwLchRcg/b5V7ZxcFu1VWLNAWWm', 1);
+
+INSERT INTO authorities (user_id, authority) VALUES (1, 'ROLE_USER');
+INSERT INTO authorities (user_id, authority) VALUES (2, 'ROLE_USER');
+INSERT INTO authorities (user_id, authority) VALUES (2, 'ROLE_ADMIN');
